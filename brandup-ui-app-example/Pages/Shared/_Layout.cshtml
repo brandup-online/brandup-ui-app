@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta content="ru" http-equiv="content-language">
+    <link type="text/css" rel="stylesheet" href="~/dist/app.css" asp-append-version="true" async>
+</head>
+<body>
+    <script type="text/javascript" src="~/dist/app.js" asp-append-version="true" async></script>
+
+    @Html.AntiForgeryToken()
+
+    <main id="page-content" role="main">
+        @RenderBody()
+    </main>
+</body>
+</html>

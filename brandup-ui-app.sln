@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{030415AA-9CA4-479B-92A5-78E269111693}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "brandup-ui-app", "brandup-ui-app\brandup-ui-app.njsproj", "{BFD89B1D-BB6A-4EC3-8940-06E7A480E74A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "brandup-ui-app-example", "brandup-ui-app-example\brandup-ui-app-example.csproj", "{382EF2A5-1B53-4306-9516-94372C21A23D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFD89B1D-BB6A-4EC3-8940-06E7A480E74A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFD89B1D-BB6A-4EC3-8940-06E7A480E74A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFD89B1D-BB6A-4EC3-8940-06E7A480E74A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFD89B1D-BB6A-4EC3-8940-06E7A480E74A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{382EF2A5-1B53-4306-9516-94372C21A23D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{382EF2A5-1B53-4306-9516-94372C21A23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{382EF2A5-1B53-4306-9516-94372C21A23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{382EF2A5-1B53-4306-9516-94372C21A23D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52669D8B-8DC1-4421-B6C6-BBEB65AEE44A}
+	EndGlobalSection
+EndGlobal
