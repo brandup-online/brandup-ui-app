@@ -42,7 +42,7 @@ export interface PageClientModel {
 export interface IApplication {
     model: any;
     navigation: NavigationModel;
-    request(options: AjaxRequestOptions)
+    request(options: AjaxRequestOptions);
     uri(path?: string, queryParams?: { [key: string]: string; }): string;
     reload();
     navigate(target: any);
@@ -63,6 +63,6 @@ export interface NavigationOptions {
 export interface IPage {
     app: IApplication;
 
-    update(nav: PageNavState, model: any)
+    update(nav: PageNavState, model: any);
     refreshScripts();
 }

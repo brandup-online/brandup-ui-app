@@ -1,7 +1,7 @@
 import { UIElement, DOM, AjaxQueue } from "brandup-ui";
 import { PageClientModel, PageNavState, IPage, IApplication } from "./common";
 
-class Page<TModel extends PageClientModel> extends UIElement implements IPage {
+export class Page<TModel extends PageClientModel> extends UIElement implements IPage {
     private __nav: PageNavState;
     private __model: TModel;
     readonly app: IApplication;
@@ -113,5 +113,3 @@ class Page<TModel extends PageClientModel> extends UIElement implements IPage {
         super.destroy();
     }
 }
-
-export default Page;

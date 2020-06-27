@@ -1,6 +1,6 @@
 import { UIElement, DOM, Utility, ajaxRequest, AjaxRequestOptions } from "brandup-ui";
 import { AppClientModel, NavigationModel, PageClientModel, PageNavState, IApplication, NavigationOptions } from "./common";
-import Page from "./page";
+import { Page } from "./page";
 
 const allowHistory = !!window.history && !!window.history.pushState;
 
