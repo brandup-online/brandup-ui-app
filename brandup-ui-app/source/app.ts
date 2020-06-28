@@ -2,6 +2,7 @@ import { UIElement } from "brandup-ui";
 import { ApplicationModel, IApplication, NavigationOptions, EnvironmentModel } from "./common";
 import { Middleware } from "./middleware";
 import { MiddlewareInvoker } from "./middlewares/invoker";
+import { CoreMiddleware } from "./middlewares/core";
 
 export class Application<TModel extends ApplicationModel> extends UIElement implements IApplication {
     readonly env: EnvironmentModel;
@@ -14,18 +15,16 @@ export class Application<TModel extends ApplicationModel> extends UIElement impl
         this.env = env;
         this.model = model;
 
-        if (middlewares.length > 0) {
+        const core = new CoreMiddleware();
+        core.bind(this);
+        this.middlewareInvoker = new MiddlewareInvoker(core);
+
+        if (middlewares && middlewares.length > 0) {
             middlewares.forEach((m) => {
                 m.bind(this);
 
-                if (!this.middlewareInvoker)
-                    this.middlewareInvoker = new MiddlewareInvoker(m);
-                else
-                    this.middlewareInvoker.next(m);
+                this.middlewareInvoker.next(m);
             });
-        }
-        else {
-            this.middlewareInvoker = new MiddlewareInvoker(new Middleware<ApplicationModel>());
         }
 
         this.setElement(document.body);

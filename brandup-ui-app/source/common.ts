@@ -17,6 +17,6 @@ export interface IApplication {
 
 export interface NavigationOptions {
     url: string;
-    replace: boolean;
+    replace?: boolean;
     success?: () => void;
 }
