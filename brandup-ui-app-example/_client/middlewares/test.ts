@@ -8,6 +8,12 @@ export class TestMiddleware extends Middleware<WebsiteModel> {
         next();
     }
 
+    loaded(_context, next) {
+        console.log("loaded");
+
+        next();
+    }
+
     navigate(context: NavigateContext) {
         if (context.replace)
             location.replace(context.url);
@@ -15,5 +21,11 @@ export class TestMiddleware extends Middleware<WebsiteModel> {
             location.assign(context.url);
 
         return;
+    }
+
+    stop(_context, next) {
+        console.log("stop");
+
+        next();
     }
 }
