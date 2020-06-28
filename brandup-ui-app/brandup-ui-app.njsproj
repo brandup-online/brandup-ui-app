@@ -38,19 +38,29 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="build\" />
-    <Folder Include="src\" />
+    <Folder Include="source\" />
+    <Folder Include="source\middlewares\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\app.ts">
+    <TypeScriptCompile Include="source\app.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\index.ts">
+    <TypeScriptCompile Include="source\builder.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\page.ts">
+    <TypeScriptCompile Include="source\index.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\common.ts">
+    <TypeScriptCompile Include="source\middleware.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="source\middlewares\core.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="source\middlewares\invoker.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="source\common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>

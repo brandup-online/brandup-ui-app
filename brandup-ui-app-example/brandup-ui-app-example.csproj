@@ -49,6 +49,8 @@
 
   <ItemGroup>
     <None Remove="_client\index.ts" />
+    <None Remove="_client\middlewares\test.ts" />
+    <None Remove="_client\typings\app.d.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,5 +60,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="_client\index.ts" />
+    <TypeScriptCompile Include="_client\middlewares\test.ts" />
+    <TypeScriptCompile Include="_client\typings\app.d.ts" />
   </ItemGroup>
 </Project>
