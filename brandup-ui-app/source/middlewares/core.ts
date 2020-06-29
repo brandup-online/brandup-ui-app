@@ -79,7 +79,7 @@ export class CoreMiddleware extends Middleware<ApplicationModel> {
         else if (elem.hasAttribute("data-href"))
             url = elem.getAttribute("data-href");
         else
-            throw "Не удалось получить Url адрес для перехода.";
+            throw "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ Url Р°РґСЂРµСЃ РґР»СЏ РїРµСЂРµС…РѕРґР°.";
 
         if (elem.hasAttribute("data-url-replace"))
             replace = true;
