@@ -1,17 +1,16 @@
 import { Middleware, StartContext, LoadContext, NavigateContext, StopContext } from "../middleware";
-import { ApplicationModel } from "../common";
 import { Utility } from "brandup-ui";
 
 export class MiddlewareInvoker {
-    readonly middleware: Middleware<ApplicationModel>;
+    readonly middleware: Middleware;
     private nextInvoker: MiddlewareInvoker;
     private static emptyFunc = () => { return; };
 
-    constructor(middleware: Middleware<ApplicationModel>) {
+    constructor(middleware: Middleware) {
         this.middleware = middleware;
     }
 
-    next(middleware: Middleware<ApplicationModel>) {
+    next(middleware: Middleware) {
         if (this.nextInvoker) {
             this.nextInvoker.next(middleware);
             return;

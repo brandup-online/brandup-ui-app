@@ -3,16 +3,16 @@ import { Middleware } from "./middleware";
 import { Application } from "./app";
 
 export class ApplicationBuilder {
-    private __middlewares: Array<Middleware<ApplicationModel>> = [];
+    private __middlewares: Array<Middleware> = [];
 
-    useMiddleware(middleware: Middleware<ApplicationModel>) {
+    useMiddleware(middleware: Middleware) {
         if (!middleware)
             throw `Middleware propery is required.`;
 
         this.__middlewares.push(middleware);
     }
 
-    build<TModel extends ApplicationModel>(env: EnvironmentModel, model: TModel) {
-        return new Application<TModel>(env, model, this.__middlewares as Array<Middleware<TModel>>);
+    build(env: EnvironmentModel, model: ApplicationModel) {
+        return new Application(env, model, this.__middlewares);
     }
 }

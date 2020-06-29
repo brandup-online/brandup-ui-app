@@ -4,7 +4,7 @@ import { Middleware } from "./middleware";
 import { MiddlewareInvoker } from "./middlewares/invoker";
 import { CoreMiddleware } from "./middlewares/core";
 
-export class Application<TModel extends ApplicationModel> extends UIElement implements IApplication {
+export class Application<TModel extends ApplicationModel = {}> extends UIElement implements IApplication {
     readonly env: EnvironmentModel;
     readonly model: TModel;
     private middlewareInvoker: MiddlewareInvoker;

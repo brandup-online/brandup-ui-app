@@ -1,7 +1,7 @@
 import { ApplicationModel } from "./common";
 import { Application } from "./app";
 
-export class Middleware<TModel extends ApplicationModel> {
+export class Middleware<TModel extends ApplicationModel = {}> {
     private _app: Application<TModel>;
 
     get app(): Application<TModel> { return this._app; }
