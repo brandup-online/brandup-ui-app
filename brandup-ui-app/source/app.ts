@@ -46,7 +46,7 @@ export class Application<TModel extends ApplicationModel> extends UIElement impl
     }
 
     uri(path?: string, queryParams?: { [key: string]: string }): string {
-        let url = this.model.baseUrl;
+        let url = this.env.basePath;
         if (path)
         {
             if (path.substr(0, 1) === "/")
