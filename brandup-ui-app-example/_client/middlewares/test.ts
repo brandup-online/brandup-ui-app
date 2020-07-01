@@ -1,4 +1,4 @@
-﻿import { Middleware, NavigateContext } from "brandup-ui-app";
+﻿import { Middleware, NavigateContext, NavigatingContext } from "brandup-ui-app";
 
 export class TestMiddleware extends Middleware {
     start(_context, next) {
@@ -12,8 +12,15 @@ export class TestMiddleware extends Middleware {
 
         next();
     }
+    navigating(context: NavigatingContext, next) {
+        context.isCancel = true;
 
-    navigate(context: NavigateContext) {
+        next();
+    }
+
+    navigate(context: NavigateContext, _next) {
+        context.items["test"] = "test";
+
         if (context.replace)
             location.replace(context.url);
         else

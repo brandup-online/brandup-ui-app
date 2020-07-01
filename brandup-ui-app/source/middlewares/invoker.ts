@@ -1,4 +1,4 @@
-import { Middleware, StartContext, LoadContext, NavigateContext, StopContext } from "../middleware";
+import { Middleware, StartContext, LoadContext, NavigatingContext, NavigateContext, StopContext } from "../middleware";
 import { Utility } from "brandup-ui";
 
 export class MiddlewareInvoker {
@@ -27,6 +27,10 @@ export class MiddlewareInvoker {
 
     invokeLoaded(context: LoadContext) {
         this.middleware.loaded(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeLoaded, [context]) : MiddlewareInvoker.emptyFunc);
+    }
+
+    invokeNavigating(context: NavigatingContext) {
+        this.middleware.navigating(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeNavigating, [context]) : MiddlewareInvoker.emptyFunc);
     }
 
     invokeNavigate(context: NavigateContext) {

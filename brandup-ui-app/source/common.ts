@@ -6,17 +6,14 @@ export interface ApplicationModel {
     [key: string]: any;
 }
 
-export interface IApplication {
-    env: EnvironmentModel;
-    model: ApplicationModel;
-    uri(path?: string, queryParams?: { [key: string]: string }): string;
-    nav(options: NavigationOptions);
-    reload();
-    destroy();
-}
-
 export interface NavigationOptions {
     url: string;
     replace?: boolean;
-    success?: () => void;
+    callback?: (status: NavigationStatus) => void;
+}
+export enum NavigationStatus {
+    Success = 1,
+    Cancelled = 2,
+    Error = 3,
+    External = 4
 }

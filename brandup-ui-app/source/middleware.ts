@@ -16,6 +16,9 @@ export class Middleware<TModel extends ApplicationModel = {}> {
     loaded(_context: LoadContext, next: () => void) {
         next();
     }
+    navigating(_context: NavigatingContext, next: () => void) {
+        next();
+    }
     navigate(_context: NavigateContext, next: () => void) {
         next();
     }
@@ -25,16 +28,30 @@ export class Middleware<TModel extends ApplicationModel = {}> {
 }
 
 export interface StartContext {
+    readonly items: { [key: string]: any };
 }
 
 export interface LoadContext {
+    readonly items: { [key: string]: any };
+}
+
+export interface NavigatingContext {
+    readonly items: { [key: string]: any };
+    readonly fullUrl: string;
+    readonly url: string;
+    readonly hash: string;
+    readonly replace: boolean;
+    isCancel: boolean;
 }
 
 export interface NavigateContext {
-    url: string;
-    hash: string;
-    replace: boolean;
+    readonly items: { [key: string]: any };
+    readonly fullUrl: string;
+    readonly url: string;
+    readonly hash: string;
+    readonly replace: boolean;
 }
 
 export interface StopContext {
+    readonly items: { [key: string]: any };
 }

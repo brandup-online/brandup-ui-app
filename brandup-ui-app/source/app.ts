@@ -1,10 +1,10 @@
 import { UIElement } from "brandup-ui";
-import { ApplicationModel, IApplication, NavigationOptions, EnvironmentModel } from "./common";
-import { Middleware } from "./middleware";
+import { EnvironmentModel, ApplicationModel, NavigationOptions, NavigationStatus } from "./common";
+import { Middleware, NavigatingContext } from "./middleware";
 import { MiddlewareInvoker } from "./middlewares/invoker";
 import { CoreMiddleware } from "./middlewares/core";
 
-export class Application<TModel extends ApplicationModel = {}> extends UIElement implements IApplication {
+export class Application<TModel extends ApplicationModel = {}> extends UIElement {
     readonly env: EnvironmentModel;
     readonly model: TModel;
     private middlewareInvoker: MiddlewareInvoker;
@@ -33,22 +33,27 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     get typeName(): string { return "Application" }
 
     init() {
-        this.middlewareInvoker.invokeStart({});
+        this.middlewareInvoker.invokeStart({
+            items: {}
+        });
         console.log("app started");
     }
     load() {
-        this.middlewareInvoker.invokeLoaded({});
+        this.middlewareInvoker.invokeLoaded({
+            items: {}
+        });
         console.log("app loaded");
     }
     destroy() {
-        this.middlewareInvoker.invokeStop({});
+        this.middlewareInvoker.invokeStop({
+            items: {}
+        });
         console.log("app stopped");
     }
 
     uri(path?: string, queryParams?: { [key: string]: string }): string {
         let url = this.env.basePath;
-        if (path)
-        {
+        if (path) {
             if (path.substr(0, 1) === "/")
                 path = path.substr(1);
             url += path;
@@ -85,12 +90,18 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         const { replace } = options;
         let hash: string = null;
 
-        if (url && url.startsWith(location.protocol) && !url.startsWith(`${location.protocol}//${location.host}`)) {
-            location.href = url;
-            return;
-        }
+        if (!options.callback)
+            options.callback = () => { return; };
 
-        if (!url)
+        if (url) {
+            if (url.startsWith("http") && !url.startsWith(`${location.protocol}//${location.host}`)) {
+                options.callback(NavigationStatus.External);
+
+                location.href = url;
+                return;
+            }
+        }
+        else
             url = location.href;
 
         const hashIndex = url.lastIndexOf("#");
@@ -103,10 +114,46 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             hash = hash.substr(1);
         }
 
-        this.middlewareInvoker.invokeNavigate({ url, hash, replace });
+        let fullUrl = url;
+        if (hash)
+            fullUrl += "#" + hash;
 
-        if (options.success)
-            options.success();
+        let navStatus: NavigationStatus;
+
+        try {
+            const navigatingContext: NavigatingContext = {
+                items: {},
+                fullUrl: fullUrl,
+                url,
+                hash,
+                replace,
+                isCancel: false
+            };
+            this.middlewareInvoker.invokeNavigating(navigatingContext);
+
+            if (navigatingContext.isCancel) {
+                navStatus = NavigationStatus.Cancelled;
+
+                console.log(`Cancelled navigate to url "${fullUrl}".`);
+            }
+            else {
+
+                this.middlewareInvoker.invokeNavigate({
+                    items: {},
+                    fullUrl: fullUrl,
+                    url,
+                    hash,
+                    replace
+                });
+
+                navStatus = NavigationStatus.Success;
+            }
+        }
+        catch {
+            navStatus = NavigationStatus.Error;
+        }
+
+        options.callback(navStatus);
     }
     reload() {
         this.nav({ url: null, replace: true });

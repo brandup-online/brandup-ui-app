@@ -2,6 +2,8 @@ import { Middleware } from "../middleware";
 import { Utility } from "brandup-ui";
 import { ApplicationModel } from "../common";
 
+const loadingLinkClass = "loading";
+
 export class CoreMiddleware extends Middleware<ApplicationModel> {
     private linkClickFunc: () => void;
     private keyDownUpFunc: () => void;
@@ -81,10 +83,12 @@ export class CoreMiddleware extends Middleware<ApplicationModel> {
         else
             throw "Не удалось получить Url адрес для перехода.";
 
-        if (elem.hasAttribute("data-url-replace"))
+        elem.classList.add(loadingLinkClass);
+
+        if (elem.hasAttribute("data-nav-replace") || elem.hasAttribute("data-url-replace"))
             replace = true;
 
-        this.app.nav({ url, replace });
+        this.app.nav({ url, replace, callback: () => { elem.classList.remove(loadingLinkClass); } });
 
         return false;
     }
