@@ -1,9 +1,8 @@
-﻿using BrandUp.Website.Pages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace brandup_ui_app_example.Pages
 {
-    public class IndexModel : AppPageModel
+    public class IndexModel : PageModel
     {
-        public override string Title => "Main page";
     }
 }

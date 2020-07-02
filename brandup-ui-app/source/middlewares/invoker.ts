@@ -19,25 +19,40 @@ export class MiddlewareInvoker {
         this.nextInvoker = new MiddlewareInvoker(middleware);
     }
 
-    invokeStart(context: StartContext) {
-        const nextFunc = this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeStart, [context]) : MiddlewareInvoker.emptyFunc;
+    invokeStart(context: StartContext, callback?: () => void) {
+        if (!callback)
+            callback = MiddlewareInvoker.emptyFunc;
+
+        const nextFunc = this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeStart, [context, callback]) : callback;
 
         this.middleware.start(context, nextFunc);
     }
 
-    invokeLoaded(context: LoadContext) {
-        this.middleware.loaded(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeLoaded, [context]) : MiddlewareInvoker.emptyFunc);
+    invokeLoaded(context: LoadContext, callback?: () => void) {
+        if (!callback)
+            callback = MiddlewareInvoker.emptyFunc;
+
+        this.middleware.loaded(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeLoaded, [context, callback]) : callback);
     }
 
-    invokeNavigating(context: NavigatingContext) {
-        this.middleware.navigating(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeNavigating, [context]) : MiddlewareInvoker.emptyFunc);
+    invokeNavigating(context: NavigatingContext, callback?: () => void) {
+        if (!callback)
+            callback = MiddlewareInvoker.emptyFunc;
+
+        this.middleware.navigating(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeNavigating, [context, callback]) : callback);
     }
 
-    invokeNavigate(context: NavigateContext) {
-        this.middleware.navigate(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeNavigate, [context]) : MiddlewareInvoker.emptyFunc);
+    invokeNavigate(context: NavigateContext, callback?: () => void) {
+        if (!callback)
+            callback = MiddlewareInvoker.emptyFunc;
+
+        this.middleware.navigate(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeNavigate, [context, callback]) : callback);
     }
 
-    invokeStop(context: StopContext) {
-        this.middleware.stop(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeStop, [context]) : MiddlewareInvoker.emptyFunc);
+    invokeStop(context: StopContext, callback?: () => void) {
+        if (!callback)
+            callback = MiddlewareInvoker.emptyFunc;
+
+        this.middleware.stop(context, this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invokeStop, [context, callback]) : callback);
     }
 }

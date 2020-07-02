@@ -8,12 +8,17 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     readonly env: EnvironmentModel;
     readonly model: TModel;
     private middlewareInvoker: MiddlewareInvoker;
+    private __isInit = false;
+    private __isLoad = false;
+    private __isDestroy = false;
 
     constructor(env: EnvironmentModel, model: TModel, middlewares: Array<Middleware<TModel>>) {
         super();
 
         this.env = env;
         this.model = model;
+
+        this.setElement(document.body);
 
         const core = new CoreMiddleware();
         core.bind(this);
@@ -26,29 +31,60 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 this.middlewareInvoker.next(m);
             });
         }
-
-        this.setElement(document.body);
     }
 
     get typeName(): string { return "Application" }
 
-    init() {
+    start(callback?: (app: Application) => void) {
+        if (this.__isInit)
+            return;
+        this.__isInit = true;
+
+        console.log("app starting");
+
         this.middlewareInvoker.invokeStart({
             items: {}
+        }, () => {
+            console.log("app started");
+
+            if (callback)
+                callback(this);
         });
-        console.log("app started");
     }
-    load() {
+    load(callback?: (app: Application) => void) {
+        if (!this.__isInit)
+            throw "Before executing the load method, you need to execute the init method.";
+
+        if (this.__isLoad)
+            return;
+        this.__isLoad = true;
+
+        console.log("app loading");
+
         this.middlewareInvoker.invokeLoaded({
             items: {}
+        }, () => {
+            console.log("app loaded");
+
+            if (callback)
+                callback(this);
         });
-        console.log("app loaded");
     }
-    destroy() {
+    destroy(callback?: (app: Application) => void) {
+        if (this.__isDestroy)
+            return;
+        this.__isDestroy = true;
+
+        console.log("app destroing");
+
         this.middlewareInvoker.invokeStop({
             items: {}
+        }, () => {
+            console.log("app stopped");
+
+            if (callback)
+                callback(this);
         });
-        console.log("app stopped");
     }
 
     uri(path?: string, queryParams?: { [key: string]: string }): string {
@@ -121,6 +157,8 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         let navStatus: NavigationStatus;
 
         try {
+            console.log(`app navigating: ${fullUrl}`);
+
             const navigatingContext: NavigatingContext = {
                 items: {},
                 fullUrl: fullUrl,
@@ -134,9 +172,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             if (navigatingContext.isCancel) {
                 navStatus = NavigationStatus.Cancelled;
 
-                console.log(`Cancelled navigate to url "${fullUrl}".`);
+                console.log(`app navigate cancelled: ${fullUrl}`);
             }
             else {
+                console.log(`app navigate: ${fullUrl}`);
 
                 this.middlewareInvoker.invokeNavigate({
                     items: {},

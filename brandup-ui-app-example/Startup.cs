@@ -1,4 +1,3 @@
-using BrandUp.Website;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -56,8 +55,8 @@ namespace brandup_ui_app_example
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                var defaultCulture = new System.Globalization.CultureInfo("ru");
-                var supportedCultures = new[] { defaultCulture };
+                var defaultCulture = new System.Globalization.CultureInfo("en");
+                var supportedCultures = new[] { defaultCulture, new System.Globalization.CultureInfo("ru") };
 
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture);
                 options.SupportedCultures = supportedCultures;
@@ -70,16 +69,6 @@ namespace brandup_ui_app_example
             });
 
             #endregion
-
-            services.AddHttpContextAccessor();
-
-            services
-                .AddWebsite(options =>
-                {
-                    options.MapConfiguration(Configuration);
-                })
-                .AddSingleWebsite("brandup-ui-app")
-                .AddWebsiteProvider<SubdomainWebsiteProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -101,7 +90,6 @@ namespace brandup_ui_app_example
             }
 
             app.UseRequestLocalization();
-            app.UseWebsite();
             app.UseResponseCompression();
             app.UseResponseCaching();
             app.UseStaticFiles();

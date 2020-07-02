@@ -1,16 +1,29 @@
 ﻿<!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta content="ru" http-equiv="content-language">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title</title>
     <link type="text/css" rel="stylesheet" href="~/dist/app.css" asp-append-version="true" async>
 </head>
 <body>
+    <div class="app">
+        <nav class="app-nav" role="navigation">
+            <div class="content-width">
+                <a asp-area="" asp-page="/Index" class="logo applink">brandup-ui-app</a>
+                <ul class="menu">
+                    <li><a asp-page="/About" class="applink">About</a></li>
+                    <li><a asp-page="/Payment" class="applink">Payment</a></li>
+                    <li><a asp-page="/Delivery" class="applink">Delivery</a></li>
+                    <li><a asp-page="/Contacts" class="applink">Contacts</a></li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="app-content content-width">
+            @RenderBody()
+        </main>
+    </div>
+
     <script type="text/javascript" src="~/dist/app.js" asp-append-version="true" async></script>
-
-    @Html.AntiForgeryToken()
-
-    <main id="page-content" role="main">
-        @RenderBody()
-    </main>
 </body>
 </html>

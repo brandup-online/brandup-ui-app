@@ -2,23 +2,27 @@
 
 export class TestMiddleware extends Middleware {
     start(_context, next) {
-        console.log("start");
+        console.log("middleware start");
 
         next();
     }
 
     loaded(_context, next) {
-        console.log("loaded");
+        console.log("middleware loaded");
 
         next();
     }
+
     navigating(context: NavigatingContext, next) {
-        context.isCancel = true;
+        console.log("middleware navigating");
+
+        //context.isCancel = true;
 
         next();
     }
+    navigate(context: NavigateContext) {
+        console.log("middleware navigate");
 
-    navigate(context: NavigateContext, _next) {
         context.items["test"] = "test";
 
         if (context.replace)
@@ -30,7 +34,7 @@ export class TestMiddleware extends Middleware {
     }
 
     stop(_context, next) {
-        console.log("stop");
+        console.log("middleware stop");
 
         next();
     }

@@ -8,5 +8,5 @@ builder.useMiddleware(new TestMiddleware());
 
 const app = builder.build({ basePath: "/" }, {});
 
-app.init();
-app.load();
+app.start(() => { console.log("app start callback"); });
+app.load(() => { console.log("app load callback"); });
