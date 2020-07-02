@@ -122,16 +122,19 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     }
 
     nav(options: NavigationOptions) {
-        let { url } = options;
+        let { url, context, callback } = options;
         const { replace } = options;
         let hash: string = null;
 
-        if (!options.callback)
-            options.callback = () => { return; };
+        if (!callback)
+            callback = () => { return; };
+
+        if (!context)
+            context = {};
 
         if (url) {
             if (url.startsWith("http") && !url.startsWith(`${location.protocol}//${location.host}`)) {
-                options.callback({ status: NavigationStatus.External, context: options.context });
+                callback({ status: NavigationStatus.External, context });
 
                 location.href = url;
                 return;
@@ -163,13 +166,14 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 url,
                 hash,
                 replace,
+                context,
                 isCancel: false
             };
             this.middlewareInvoker.invokeNavigating(navigatingContext, () => {
                 if (navigatingContext.isCancel) {
                     console.log(`app navigate cancelled: ${fullUrl}`);
 
-                    options.callback({ status: NavigationStatus.Cancelled, context: options.context });
+                    callback({ status: NavigationStatus.Cancelled, context });
                     return;
                 }
                 else {
@@ -180,9 +184,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                         fullUrl: fullUrl,
                         url,
                         hash,
-                        replace
+                        replace,
+                        context
                     }, () => {
-                            options.callback({ status: NavigationStatus.Success, context: options.context });
+                            callback({ status: NavigationStatus.Success, context });
                         });
 
                     return;
@@ -190,7 +195,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             });
         }
         catch {
-            options.callback({ status: NavigationStatus.Error, context: options.context });
+            callback({ status: NavigationStatus.Error, context });
         }
     }
     reload() {

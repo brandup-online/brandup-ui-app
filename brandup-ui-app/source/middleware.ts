@@ -41,6 +41,7 @@ export interface NavigatingContext {
     readonly url: string;
     readonly hash: string;
     readonly replace: boolean;
+    readonly context: { [key: string]: any };
     isCancel: boolean;
 }
 
@@ -50,6 +51,7 @@ export interface NavigateContext {
     readonly url: string;
     readonly hash: string;
     readonly replace: boolean;
+    readonly context: { [key: string]: any };
 }
 
 export interface StopContext {
