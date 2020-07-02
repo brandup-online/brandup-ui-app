@@ -9,11 +9,17 @@ export interface ApplicationModel {
 export interface NavigationOptions {
     url: string;
     replace?: boolean;
-    callback?: (status: NavigationStatus) => void;
+    context?: { [key: string]: any };
+    callback?: (result: NavigationResult) => void;
 }
 export enum NavigationStatus {
     Success = 1,
     Cancelled = 2,
     Error = 3,
     External = 4
+}
+
+export interface NavigationResult {
+    status: NavigationStatus;
+    context?: { [key: string]: any };
 }

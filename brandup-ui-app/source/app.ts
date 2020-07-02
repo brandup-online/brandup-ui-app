@@ -131,7 +131,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         if (url) {
             if (url.startsWith("http") && !url.startsWith(`${location.protocol}//${location.host}`)) {
-                options.callback(NavigationStatus.External);
+                options.callback({ status: NavigationStatus.External, context: options.context });
 
                 location.href = url;
                 return;
@@ -154,8 +154,6 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         if (hash)
             fullUrl += "#" + hash;
 
-        let navStatus: NavigationStatus;
-
         try {
             console.log(`app navigating: ${fullUrl}`);
 
@@ -167,32 +165,33 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 replace,
                 isCancel: false
             };
-            this.middlewareInvoker.invokeNavigating(navigatingContext);
+            this.middlewareInvoker.invokeNavigating(navigatingContext, () => {
+                if (navigatingContext.isCancel) {
+                    console.log(`app navigate cancelled: ${fullUrl}`);
 
-            if (navigatingContext.isCancel) {
-                navStatus = NavigationStatus.Cancelled;
+                    options.callback({ status: NavigationStatus.Cancelled, context: options.context });
+                    return;
+                }
+                else {
+                    console.log(`app navigate: ${fullUrl}`);
 
-                console.log(`app navigate cancelled: ${fullUrl}`);
-            }
-            else {
-                console.log(`app navigate: ${fullUrl}`);
+                    this.middlewareInvoker.invokeNavigate({
+                        items: {},
+                        fullUrl: fullUrl,
+                        url,
+                        hash,
+                        replace
+                    }, () => {
+                            options.callback({ status: NavigationStatus.Success, context: options.context });
+                        });
 
-                this.middlewareInvoker.invokeNavigate({
-                    items: {},
-                    fullUrl: fullUrl,
-                    url,
-                    hash,
-                    replace
-                });
-
-                navStatus = NavigationStatus.Success;
-            }
+                    return;
+                }
+            });
         }
         catch {
-            navStatus = NavigationStatus.Error;
+            options.callback({ status: NavigationStatus.Error, context: options.context });
         }
-
-        options.callback(navStatus);
     }
     reload() {
         this.nav({ url: null, replace: true });
