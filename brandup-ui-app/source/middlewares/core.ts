@@ -1,8 +1,12 @@
-import { Middleware } from "../middleware";
 import { Utility } from "brandup-ui";
+import { Middleware } from "../middleware";
 import { ApplicationModel } from "../common";
 
 const loadingLinkClass = "loading";
+const navUrlClassName = "applink";
+const navUrlAttributeName = "data-nav-url";
+const navReplaceAttributeName = "data-nav-replace";
+const navIgnoreAttributeName = "data-nav-ignore";
 
 export class CoreMiddleware extends Middleware<ApplicationModel> {
     private linkClickFunc: () => void;
@@ -40,12 +44,12 @@ export class CoreMiddleware extends Middleware<ApplicationModel> {
         let elem = e.target as HTMLElement;
         let ignore = false;
         while (elem) {
-            if (elem.hasAttribute("data-nav-ignore")) {
+            if (elem.hasAttribute(navIgnoreAttributeName)) {
                 ignore = true;
                 break;
             }
 
-            if (elem.classList && elem.classList.contains("applink"))
+            if (elem.classList && elem.classList.contains(navUrlClassName))
                 break;
             if (elem === e.currentTarget)
                 return;
@@ -78,14 +82,16 @@ export class CoreMiddleware extends Middleware<ApplicationModel> {
         let replace = false;
         if (elem.tagName === "A")
             url = elem.getAttribute("href");
-        else if (elem.hasAttribute("data-href"))
-            url = elem.getAttribute("data-href");
+        else if (elem.hasAttribute(navUrlAttributeName))
+            url = elem.getAttribute(navUrlAttributeName);
         else
             throw "Не удалось получить Url адрес для перехода.";
 
+        if (elem.classList.contains(loadingLinkClass))
+            return false;
         elem.classList.add(loadingLinkClass);
 
-        if (elem.hasAttribute("data-nav-replace") || elem.hasAttribute("data-url-replace"))
+        if (elem.hasAttribute(navReplaceAttributeName))
             replace = true;
 
         this.app.nav({ url, replace, callback: () => { elem.classList.remove(loadingLinkClass); } });
