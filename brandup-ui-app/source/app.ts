@@ -145,8 +145,8 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         const hashIndex = url.lastIndexOf("#");
         if (hashIndex > 0) {
-            url = url.substr(0, hashIndex);
             hash = url.substr(hashIndex + 1);
+            url = url.substr(0, hashIndex);
         }
 
         if (hash && hash.startsWith("#")) {
@@ -194,7 +194,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 }
             });
         }
-        catch {
+        catch (e) {
+            console.error("navigation error");
+            console.error(e);
+
             callback({ status: NavigationStatus.Error, context });
         }
     }

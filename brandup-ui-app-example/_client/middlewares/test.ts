@@ -16,9 +16,13 @@ export class TestMiddleware extends Middleware {
     navigating(context: NavigatingContext, next) {
         console.log("middleware navigating");
 
-        //context.isCancel = true;
+        setTimeout(() => {
+            //throw new Error("test");
 
-        next();
+            next();
+        }, 1000);
+
+        //context.isCancel = true;
     }
     navigate(context: NavigateContext) {
         console.log("middleware navigate");
