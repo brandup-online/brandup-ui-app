@@ -27,16 +27,13 @@ export class Middleware<TModel extends ApplicationModel = {}> {
     }
 }
 
-export interface StartContext {
-    readonly items: { [key: string]: any };
+export interface StartContext extends InvokeContext {
 }
 
-export interface LoadContext {
-    readonly items: { [key: string]: any };
+export interface LoadContext extends InvokeContext {
 }
 
-export interface NavigatingContext {
-    readonly items: { [key: string]: any };
+export interface NavigatingContext extends InvokeContext {
     readonly fullUrl: string;
     readonly url: string;
     readonly hash: string;
@@ -45,8 +42,7 @@ export interface NavigatingContext {
     isCancel: boolean;
 }
 
-export interface NavigateContext {
-    readonly items: { [key: string]: any };
+export interface NavigateContext extends InvokeContext {
     readonly fullUrl: string;
     readonly url: string;
     readonly hash: string;
@@ -54,6 +50,9 @@ export interface NavigateContext {
     readonly context: { [key: string]: any };
 }
 
-export interface StopContext {
+export interface StopContext extends InvokeContext {
+}
+
+export interface InvokeContext {
     readonly items: { [key: string]: any };
 }

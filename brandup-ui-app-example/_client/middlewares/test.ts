@@ -10,6 +10,8 @@ export class TestMiddleware extends Middleware {
     loaded(_context, next) {
         console.log("middleware loaded");
 
+        alert(this.app.uri("test", { test: "test" }));
+
         next();
     }
 

@@ -42,7 +42,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         console.log("app starting");
 
-        this.middlewareInvoker.invokeStart({
+        this.middlewareInvoker.invoke("start", {
             items: {}
         }, () => {
             console.log("app started");
@@ -61,7 +61,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         console.log("app loading");
 
-        this.middlewareInvoker.invokeLoaded({
+        this.middlewareInvoker.invoke("loaded", {
             items: {}
         }, () => {
             console.log("app loaded");
@@ -77,7 +77,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         console.log("app destroing");
 
-        this.middlewareInvoker.invokeStop({
+        this.middlewareInvoker.invoke("stop", {
             items: {}
         }, () => {
             console.log("app stopped");
@@ -106,10 +106,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 if (i > 0)
                     query += "&";
 
-                query += key;
+                query += encodeURIComponent(key);
 
                 if (value)
-                    query += "=" + value;
+                    query += "=" + encodeURIComponent(value);
 
                 i++;
             }
@@ -169,7 +169,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 context,
                 isCancel: false
             };
-            this.middlewareInvoker.invokeNavigating(navigatingContext, () => {
+            this.middlewareInvoker.invoke("navigating", navigatingContext, () => {
                 if (navigatingContext.isCancel) {
                     console.log(`app navigate cancelled: ${fullUrl}`);
 
@@ -179,7 +179,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 else {
                     console.log(`app navigate: ${fullUrl}`);
 
-                    this.middlewareInvoker.invokeNavigate({
+                    this.middlewareInvoker.invoke("navigate", {
                         items: {},
                         fullUrl: fullUrl,
                         url,
