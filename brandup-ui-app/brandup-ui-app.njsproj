@@ -39,7 +39,6 @@
   <ItemGroup>
     <Folder Include="build\" />
     <Folder Include="source\" />
-    <Folder Include="source\middlewares\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="source\app.ts">
@@ -54,10 +53,7 @@
     <TypeScriptCompile Include="source\middleware.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="source\middlewares\core.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="source\middlewares\invoker.ts">
+    <TypeScriptCompile Include="source\invoker.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="source\common.ts">

@@ -9,22 +9,6 @@ export class Middleware<TModel extends ApplicationModel = {}> {
     bind(app: Application<TModel>) {
         this._app = app;
     }
-
-    start(_context: StartContext, next: () => void) {
-        next();
-    }
-    loaded(_context: LoadContext, next: () => void) {
-        next();
-    }
-    navigating(_context: NavigatingContext, next: () => void) {
-        next();
-    }
-    navigate(_context: NavigateContext, next: () => void) {
-        next();
-    }
-    stop(_context: StopContext, next: () => void) {
-        next();
-    }
 }
 
 export interface StartContext extends InvokeContext {
@@ -51,6 +35,10 @@ export interface NavigateContext extends InvokeContext {
 }
 
 export interface StopContext extends InvokeContext {
+}
+
+export interface SubmitContext extends InvokeContext {
+    form: HTMLFormElement;
 }
 
 export interface InvokeContext {

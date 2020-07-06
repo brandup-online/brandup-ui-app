@@ -1,4 +1,4 @@
-﻿import { Middleware, NavigateContext, NavigatingContext } from "brandup-ui-app";
+﻿import { Middleware, NavigateContext, NavigatingContext, SubmitContext } from "brandup-ui-app";
 
 export class TestMiddleware extends Middleware {
     start(_context, next) {
@@ -10,7 +10,7 @@ export class TestMiddleware extends Middleware {
     loaded(_context, next) {
         console.log("middleware loaded");
 
-        alert(this.app.uri("test", { test: "test" }));
+        //alert(this.app.uri("test", { test: "test" }));
 
         next();
     }
@@ -37,6 +37,12 @@ export class TestMiddleware extends Middleware {
             location.assign(context.url);
 
         return;
+    }
+
+    submit(context: SubmitContext, next) {
+        next();
+
+        context.form.submit();
     }
 
     stop(_context, next) {

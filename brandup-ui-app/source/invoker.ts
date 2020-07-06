@@ -1,9 +1,9 @@
-import { Middleware, InvokeContext } from "../middleware";
+import { Middleware, InvokeContext } from "./middleware";
 import { Utility } from "brandup-ui";
 
 export class MiddlewareInvoker {
     readonly middleware: Middleware;
-    private nextInvoker: MiddlewareInvoker;
+    private __next: MiddlewareInvoker;
     private static emptyFunc = () => { return; };
 
     constructor(middleware: Middleware) {
@@ -11,19 +11,19 @@ export class MiddlewareInvoker {
     }
 
     next(middleware: Middleware) {
-        if (this.nextInvoker) {
-            this.nextInvoker.next(middleware);
+        if (this.__next) {
+            this.__next.next(middleware);
             return;
         }
 
-        this.nextInvoker = new MiddlewareInvoker(middleware);
+        this.__next = new MiddlewareInvoker(middleware);
     }
 
     invoke<TContext extends InvokeContext>(method: string, context: TContext, callback?: () => void) {
         if (!callback)
             callback = MiddlewareInvoker.emptyFunc;
 
-        const nextFunc = this.nextInvoker ? Utility.createDelegate2(this.nextInvoker, this.nextInvoker.invoke, [method, context, callback]) : callback;
+        const nextFunc = this.__next ? Utility.createDelegate2(this.__next, this.__next.invoke, [method, context, callback]) : callback;
 
         if (typeof this.middleware[method] === "function")
             this.middleware[method](context, nextFunc);
