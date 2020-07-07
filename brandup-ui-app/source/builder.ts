@@ -8,12 +8,16 @@ export class ApplicationBuilder {
 
     setAppType(appType: typeof Application) {
         this.__appType = appType;
+
+        return this;
     }
     useMiddleware(middleware: Middleware) {
         if (!middleware)
             throw `Middleware propery is required.`;
 
         this.__middlewares.push(middleware);
+
+        return this;
     }
 
     build(env: EnvironmentModel, model: ApplicationModel) {
