@@ -84,9 +84,9 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
             if (callback)
                 callback(this);
-        });
 
-        this.endLoadingIndicator();
+            this.endLoadingIndicator();
+        });
     }
     destroy(callback?: (app: Application) => void) {
         if (this.__isDestroy)
