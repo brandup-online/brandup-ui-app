@@ -1,5 +1,4 @@
 import { Middleware, InvokeContext } from "./middleware";
-import { Utility } from "brandup-ui";
 
 export class MiddlewareInvoker {
     readonly middleware: Middleware;
@@ -23,7 +22,7 @@ export class MiddlewareInvoker {
         if (!callback)
             callback = MiddlewareInvoker.emptyFunc;
 
-        const nextFunc = this.__next ? Utility.createDelegate2(this.__next, this.__next.invoke, [method, context, callback]) : callback;
+        const nextFunc = this.__next ? () => { this.__next.invoke(method, context, callback); } : callback;
 
         if (typeof this.middleware[method] === "function")
             this.middleware[method](context, nextFunc);

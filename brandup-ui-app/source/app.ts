@@ -1,4 +1,4 @@
-import { UIElement, Utility } from "brandup-ui";
+import { UIElement } from "brandup-ui";
 import { EnvironmentModel, ApplicationModel, NavigationOptions, NavigationStatus, SubmitOptions } from "./common";
 import { Middleware, NavigatingContext } from "./middleware";
 import { MiddlewareInvoker } from "./invoker";
@@ -17,9 +17,9 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     private __isInit = false;
     private __isLoad = false;
     private __isDestroy = false;
-    private __clickFunc: () => void;
-    private __keyDownUpFunc: () => void;
-    private __submitFunc: () => void;
+    private __clickFunc: (e: MouseEvent) => void;
+    private __keyDownUpFunc: (e: KeyboardEvent) => void;
+    private __submitFunc: (e: Event) => void;
     private _ctrlPressed = false;
 
     constructor(env: EnvironmentModel, model: TModel, middlewares: Array<Middleware<TModel>>) {
@@ -53,10 +53,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         console.log("app starting");
 
-        window.addEventListener("click", this.__clickFunc = Utility.createDelegate(this, this.__onClick), false);
-        window.addEventListener("keydown", this.__keyDownUpFunc = Utility.createDelegate(this, this.__onKeyDownUp), false);
+        window.addEventListener("click", this.__clickFunc = (e: MouseEvent) => this.__onClick(e), false);
+        window.addEventListener("keydown", this.__keyDownUpFunc = (e: KeyboardEvent) => this.__onKeyDownUp(e), false);
         window.addEventListener("keyup", this.__keyDownUpFunc, false);
-        window.addEventListener("submit", this.__submitFunc = Utility.createDelegate(this, this.__onSubmit), false);
+        window.addEventListener("submit", this.__submitFunc = (e: Event) => this.__onSubmit(e), false);
 
         this.__invoker.invoke("start", {
             items: {}
