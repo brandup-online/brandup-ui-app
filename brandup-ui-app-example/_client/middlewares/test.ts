@@ -1,7 +1,7 @@
 ﻿import { Middleware, NavigateContext, NavigatingContext, SubmitContext } from "brandup-ui-app";
 
 export class TestMiddleware extends Middleware {
-    start(_context, next) {
+    start(_context, next, end) {
         console.log("middleware start");
 
         next();
@@ -19,15 +19,18 @@ export class TestMiddleware extends Middleware {
         console.log("middleware navigating");
 
         setTimeout(() => {
-            //throw new Error("test");
-
             next();
-        }, 1000);
+        }, 100);
 
         //context.isCancel = true;
     }
-    navigate(context: NavigateContext) {
+    navigate(context: NavigateContext, next, end) {
         console.log("middleware navigate");
+
+        if (context.url.indexOf("delivery") >= 0) {
+            end();
+            return;
+        }
 
         context.items["test"] = "test";
 

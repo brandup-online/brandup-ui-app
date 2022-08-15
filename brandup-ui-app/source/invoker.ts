@@ -23,9 +23,10 @@ export class MiddlewareInvoker {
             callback = MiddlewareInvoker.emptyFunc;
 
         const nextFunc = this.__next ? () => { this.__next.invoke(method, context, callback); } : callback;
+        const endFunc = () => { callback(); };
 
         if (typeof this.middleware[method] === "function")
-            this.middleware[method](context, nextFunc);
+            this.middleware[method](context, nextFunc, endFunc);
         else
             nextFunc();
     }

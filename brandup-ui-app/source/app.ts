@@ -336,7 +336,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         else if (elem.hasAttribute(navUrlAttributeName))
             url = elem.getAttribute(navUrlAttributeName);
         else
-            throw "Не удалось получить Url адрес для перехода.";
+            throw "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ Url Р°РґСЂРµСЃ РґР»СЏ РїРµСЂРµС…РѕРґР°.";
 
         if (elem.classList.contains(loadingLinkClass))
             return false;
