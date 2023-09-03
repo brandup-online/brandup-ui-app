@@ -1,6 +1,6 @@
 import { UIElement } from "brandup-ui";
 import { EnvironmentModel, ApplicationModel, NavigationOptions, NavigationStatus, SubmitOptions } from "./common";
-import { LoadContext, Middleware, NavigateContext, StartContext, StopContext } from "./middleware";
+import { LoadContext, Middleware, NavigateContext, StartContext, StopContext, SubmitContext } from "./middleware";
 import { MiddlewareInvoker } from "./invoker";
 
 const formClassName = "appform";
@@ -302,10 +302,13 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             return;
         }
 
-        this.__invoker.invoke("submit", {
+        var submitContext: SubmitContext = {
             items: {},
-            form
-        }, complexCallback);
+            form,
+            context
+        }
+
+        this.__invoker.invoke("submit", submitContext, complexCallback);
     }
     reload() {
         this.nav({ url: null, replace: true });
@@ -375,8 +378,8 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         const form = e.target as HTMLFormElement;
         if (!form.classList.contains(formClassName))
             return;
-        if (!form.checkValidity() && !form.noValidate)
-            return;
+        //if (!form.checkValidity() && !form.noValidate)
+        //    return;
 
         e.preventDefault();
 
