@@ -273,11 +273,11 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         if (button) {
             // Если отправка с кнопки, то берём её параметры
-            if (button.formMethod)
+            if (button.hasAttribute("formmethod"))
                 method = button.formMethod;
-            if (button.formEnctype)
+            if (button.hasAttribute("formenctype"))
                 enctype = button.formEnctype;
-            if (button.formAction)
+            if (button.hasAttribute("formaction"))
                 url = button.formAction;
         }
 
