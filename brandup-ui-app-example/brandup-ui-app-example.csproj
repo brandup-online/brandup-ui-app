@@ -1,64 +1,50 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <RootNamespace>brandup_ui_app_example</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<RootNamespace>brandup_ui_app_example</RootNamespace>
+		<TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+	</PropertyGroup>
 
-  <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+	<Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
+		<!-- Ensure Node.js is installed -->
+		<Exec Command="node --version" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+		</Exec>
+		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
 
-    <!-- In development, the dist files won't exist on the first run or when cloning to
-         a different machine, so rebuild them if not already present. -->
-    <Message Importance="high" Text="Performing first-run Webpack build..." />
-    <Exec Command="set NODE_ENV=development&amp;&amp; node node_modules/webpack/bin/webpack.js --mode=development --progress" />
-  </Target>
+		<!-- In development, the dist files won't exist on the first run or when cloning to
+		 a different machine, so rebuild them if not already present. -->
+		<Message Importance="high" Text="Performing first-run Webpack build..." />
+		<Exec Command="set NODE_ENV=development&amp;&amp; node node_modules/webpack/bin/webpack.js --mode=development --progress" />
+	</Target>
 
-  <Target Name="ReleaseRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' And !Exists('wwwroot\dist') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+	<Target Name="ReleaseRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' And !Exists('wwwroot\dist') ">
+		<!-- Ensure Node.js is installed -->
+		<Exec Command="node --version" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+		</Exec>
+		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
 
-    <!-- In development, the dist files won't exist on the first run or when cloning to
-         a different machine, so rebuild them if not already present. -->
-    <Message Importance="high" Text="Performing first-run Webpack build..." />
-    <Exec Command="set NODE_ENV=production&amp;&amp; node node_modules/webpack/bin/webpack.js --env.prod --mode=production --progress" />
-  </Target>
+		<!-- In development, the dist files won't exist on the first run or when cloning to
+		 a different machine, so rebuild them if not already present. -->
+		<Message Importance="high" Text="Performing first-run Webpack build..." />
+		<Exec Command="set NODE_ENV=production&amp;&amp; node node_modules/webpack/bin/webpack.js --env.prod --mode=production --progress" />
+	</Target>
 
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <!--<Exec Command="npm install" />-->
-    <Exec Command="set NODE_ENV=production&amp;&amp; node node_modules/webpack/bin/webpack.js --env.prod --mode=production --progress" />
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+		<!--<Exec Command="npm install" />-->
+		<Exec Command="set NODE_ENV=production&amp;&amp; node node_modules/webpack/bin/webpack.js --env.prod --mode=production --progress" />
 
-    <!-- Include the newly-built files in the publish output -->
-    <ItemGroup>
-      <DistFiles Include="wwwroot\dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-        <RelativePath>%(DistFiles.Identity)</RelativePath>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </ResolvedFileToPublish>
-    </ItemGroup>
-  </Target>
-
-  <ItemGroup>
-    <None Remove="_client\middlewares\pages.ts" />
-    <None Remove="_client\pages\about.ts" />
-    <None Remove="_client\pages\base.ts" />
-    <None Remove="_client\pages\index.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="_client\middlewares\pages.ts" />
-    <TypeScriptCompile Include="_client\pages\base.ts" />
-    <TypeScriptCompile Include="_client\pages\about.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="_client\pages\index.ts" />
-  </ItemGroup>
+		<!-- Include the newly-built files in the publish output -->
+		<ItemGroup>
+			<DistFiles Include="wwwroot\dist\**" />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+				<RelativePath>%(DistFiles.Identity)</RelativePath>
+				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			</ResolvedFileToPublish>
+		</ItemGroup>
+	</Target>
+	
 </Project>

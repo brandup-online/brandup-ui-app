@@ -17,9 +17,9 @@ namespace brandup_ui_app_example
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
-
             #region ASP.NET
+
+            services.AddRazorPages();
 
             services
                 .AddResponseCompression(options =>
@@ -71,14 +71,9 @@ namespace brandup_ui_app_example
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
-                app.UseExceptionHandler("/error");
                 app.UseHsts();
-            }
 
             app.UseRequestLocalization();
             app.UseResponseCompression();
