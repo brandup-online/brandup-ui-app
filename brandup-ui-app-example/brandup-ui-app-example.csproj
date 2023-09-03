@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>brandup_ui_app_example</RootNamespace>
-    <TypeScriptToolsVersion>4.7</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
@@ -46,4 +45,20 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <None Remove="_client\middlewares\pages.ts" />
+    <None Remove="_client\pages\about.ts" />
+    <None Remove="_client\pages\base.ts" />
+    <None Remove="_client\pages\index.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="_client\middlewares\pages.ts" />
+    <TypeScriptCompile Include="_client\pages\base.ts" />
+    <TypeScriptCompile Include="_client\pages\about.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="_client\pages\index.ts" />
+  </ItemGroup>
 </Project>

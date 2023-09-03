@@ -1,6 +1,6 @@
 import { UIElement } from "brandup-ui";
 import { EnvironmentModel, ApplicationModel, NavigationOptions, NavigationStatus, SubmitOptions } from "./common";
-import { Middleware, NavigatingContext } from "./middleware";
+import { LoadContext, Middleware, NavigateContext, StartContext, StopContext } from "./middleware";
 import { MiddlewareInvoker } from "./invoker";
 
 const formClassName = "appform";
@@ -51,17 +51,19 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             return;
         this.__isInit = true;
 
-        console.log("app starting");
+        console.info("app starting");
 
         window.addEventListener("click", this.__clickFunc = (e: MouseEvent) => this.__onClick(e), false);
         window.addEventListener("keydown", this.__keyDownUpFunc = (e: KeyboardEvent) => this.__onKeyDownUp(e), false);
         window.addEventListener("keyup", this.__keyDownUpFunc, false);
         window.addEventListener("submit", this.__submitFunc = (e: Event) => this.__onSubmit(e), false);
 
-        this.__invoker.invoke("start", {
+        const context: StartContext = {
             items: {}
-        }, () => {
-            console.log("app started");
+        };
+
+        this.__invoker.invoke("start", context, () => {
+            console.info("app started");
 
             if (callback)
                 callback(this);
@@ -75,12 +77,14 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             return;
         this.__isLoad = true;
 
-        console.log("app loading");
+        console.info("app loading");
 
-        this.__invoker.invoke("loaded", {
+        const context: LoadContext = {
             items: {}
-        }, () => {
-            console.log("app loaded");
+        };
+
+        this.__invoker.invoke("loaded", context, () => {
+            console.info("app loaded");
 
             if (callback)
                 callback(this);
@@ -93,17 +97,19 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             return;
         this.__isDestroy = true;
 
-        console.log("app destroing");
+        console.info("app destroing");
 
         window.removeEventListener("click", this.__clickFunc, false);
         window.removeEventListener("keydown", this.__keyDownUpFunc, false);
         window.removeEventListener("keyup", this.__keyDownUpFunc, false);
         window.removeEventListener("submit", this.__submitFunc, false);
 
-        this.__invoker.invoke("stop", {
+        const context: StopContext = {
             items: {}
-        }, () => {
-            console.log("app stopped");
+        };
+
+        this.__invoker.invoke("stop", context, () => {
+            console.info("app stopped");
 
             if (callback)
                 callback(this);
@@ -113,8 +119,8 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     uri(path?: string, queryParams?: { [key: string]: string }): string {
         let url = this.env.basePath;
         if (path) {
-            if (path.substr(0, 1) === "/")
-                path = path.substr(1);
+            if (path.startsWith("/"))
+                path = path.substring(1);
             url += path;
         }
 
@@ -147,7 +153,6 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     nav(options: NavigationOptions) {
         let { url, context, callback } = options;
         const { replace } = options;
-        let hash: string = null;
 
         if (!callback)
             callback = () => { return; };
@@ -155,70 +160,84 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         if (!context)
             context = {};
 
-        if (url) {
-            if (url.startsWith("http") && !url.startsWith(`${location.protocol}//${location.host}`)) {
+        if (!url)
+            url = location.href;
+
+        if (url.startsWith("http")) {
+            // Если адрес абсолютный
+
+            const currentBaseUrl = `${location.protocol}//${location.host}`;
+            if (!url.startsWith(currentBaseUrl)) {
+                // Если домен и протокол отличается от текущего, то перезагружаем страницу
+
                 callback({ status: NavigationStatus.External, context });
 
                 location.href = url;
                 return;
             }
-        }
-        else
-            url = location.href;
 
+            url = url.substring(currentBaseUrl.length);
+        }
+
+        // Вытаскиваем хеш
+        let hash: string = null;
         const hashIndex = url.lastIndexOf("#");
         if (hashIndex > 0) {
-            hash = url.substr(hashIndex + 1);
-            url = url.substr(0, hashIndex);
+            hash = url.substring(hashIndex + 1);
+            url = url.substring(0, hashIndex);
+
+            if (hash.startsWith("#"))
+                hash = hash.substring(1);
         }
 
-        if (hash && hash.startsWith("#")) {
-            hash = hash.substr(1);
+        // Вытаскиваем параметры
+        let query: string = null;
+        let queryParams: { [key: string]: Array<string> } = {};
+        const qyeryIndex = url.indexOf("?");
+        if (qyeryIndex > 0) {
+            query = url.substring(qyeryIndex + 1);
+            url = url.substring(0, qyeryIndex);
+
+            var q = new URLSearchParams(query);
+            q.forEach((v, k) => {
+                if (!queryParams[k])
+                    queryParams[k] = [v];
+                else
+                    queryParams[k].push(v);
+            });
         }
 
-        let fullUrl = url;
+        // Вытаскиваем путь
+        const path = url;
+
+        // Собираем полный адрес без домена
+        let fullUrl = path;
+        if (query)
+            fullUrl += "?" + query;
         if (hash)
             fullUrl += "#" + hash;
 
         try {
-            console.log(`app navigating: ${fullUrl}`);
+            console.info(`app navigate: ${fullUrl}`);
 
             this.beginLoadingIndicator();
 
-            const navigatingContext: NavigatingContext = {
+            const navContext: NavigateContext = {
                 items: {},
-                fullUrl: fullUrl,
-                url,
+                url: fullUrl,
+                path,
+                query,
+                queryParams: queryParams,
                 hash,
                 replace,
-                context,
-                isCancel: false
+                context
             };
-            this.__invoker.invoke("navigating", navigatingContext, () => {
-                if (navigatingContext.isCancel) {
-                    console.log(`app navigate cancelled: ${fullUrl}`);
 
-                    callback({ status: NavigationStatus.Cancelled, context });
-                    this.endLoadingIndicator();
-                    return;
-                }
-                else {
-                    console.log(`app navigate: ${fullUrl}`);
+            console.info(navContext);
 
-                    this.__invoker.invoke("navigate", {
-                        items: {},
-                        fullUrl: fullUrl,
-                        url,
-                        hash,
-                        replace,
-                        context
-                    }, () => {
-                            callback({ status: NavigationStatus.Success, context });
-                            this.endLoadingIndicator();
-                        });
-
-                    return;
-                }
+            this.__invoker.invoke("navigate", navContext, () => {
+                callback({ status: NavigationStatus.Success, context });
+                this.endLoadingIndicator();
             });
         }
         catch (e) {
@@ -266,7 +285,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             let url = form.action ? form.action : location.href;
             const urlHashIndex = url.lastIndexOf("#");
             if (urlHashIndex > 0)
-                url = url.substr(0, urlHashIndex);
+                url = url.substring(0, urlHashIndex);
 
             if (queryParams) {
                 if (url.lastIndexOf("?") === -1)
@@ -325,7 +344,6 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         e.preventDefault();
         e.stopPropagation();
-        e.returnValue = false;
 
         if (ignore)
             return false;

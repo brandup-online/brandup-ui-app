@@ -1,13 +1,3 @@
-﻿@page
+﻿@page "{*url}"
 @model IndexModel
-@{
-    ViewBag.Title = "Main";
-}
-
-<header class="page-header">
-    <h1>Welcome</h1>
-</header>
-
-<section class="page-text">
-    <p>Learn about <a asp-page="/error" class="applink">building Web apps with ASP.NET Core</a>.</p>
-</section>
+@{ ViewBag.Title = "Main"; }

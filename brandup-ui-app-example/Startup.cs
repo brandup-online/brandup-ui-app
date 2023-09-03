@@ -19,7 +19,7 @@ namespace brandup_ui_app_example
         {
             services.AddRazorPages();
 
-            #region Web
+            #region ASP.NET
 
             services
                 .AddResponseCompression(options =>
@@ -53,7 +53,7 @@ namespace brandup_ui_app_example
                 options.LowercaseQueryStrings = true;
             });
 
-            services.Configure<RequestLocalizationOptions>(options =>
+            services.AddRequestLocalization(options =>
             {
                 var defaultCulture = new System.Globalization.CultureInfo("en");
                 var supportedCultures = new[] { defaultCulture, new System.Globalization.CultureInfo("ru") };
@@ -63,10 +63,7 @@ namespace brandup_ui_app_example
                 options.SupportedUICultures = supportedCultures;
             });
 
-            services.Configure<IISServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
+            services.Configure<IISServerOptions>(options => options.AllowSynchronousIO = true);
 
             #endregion
         }
