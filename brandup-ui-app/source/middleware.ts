@@ -52,6 +52,10 @@ export interface StopContext extends InvokeContext {
 
 export interface SubmitContext extends InvokeContext {
     readonly form: HTMLFormElement;
+    readonly button: HTMLButtonElement;
+    readonly method: string;
+    readonly enctype: string;
+    readonly url: string;
     readonly context: { [key: string]: any };
 }
 

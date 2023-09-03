@@ -8,6 +8,11 @@ export default class AboutModel extends PageModel {
     protected _onRenderElement(element: HTMLElement) {
         super._onRenderElement(element);
 
-        element.appendChild( DOM.tag("p", null, "About page content."));
+        element.appendChild(DOM.tag("p", null, "About page content."));
+
+        element.appendChild(DOM.tag("form", { class: "appform", method: "post" }, [
+            DOM.tag("input", { type: "text", name: "value" }),
+            DOM.tag("button", { type: "submit", formaction: this.app.uri("/send") }, "Send")
+        ]));
     }
 }

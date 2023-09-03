@@ -3,12 +3,12 @@ import { EnvironmentModel, ApplicationModel, NavigationOptions, NavigationStatus
 import { LoadContext, Middleware, NavigateContext, StartContext, StopContext, SubmitContext } from "./middleware";
 import { MiddlewareInvoker } from "./invoker";
 
-const formClassName = "appform";
-const loadingLinkClass = "loading";
-const navUrlClassName = "applink";
-const navUrlAttributeName = "data-nav-url";
-const navReplaceAttributeName = "data-nav-replace";
-const navIgnoreAttributeName = "data-nav-ignore";
+export const FormClassName = "appform";
+export const LoadingElementClass = "loading";
+export const NavUrlClassName = "applink";
+export const NavUrlAttributeName = "data-nav-url";
+export const NavUrlReplaceAttributeName = "data-nav-replace";
+export const NavIgnoreAttributeName = "data-nav-ignore";
 
 export class Application<TModel extends ApplicationModel = {}> extends UIElement {
     readonly env: EnvironmentModel;
@@ -56,7 +56,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         window.addEventListener("click", this.__clickFunc = (e: MouseEvent) => this.__onClick(e), false);
         window.addEventListener("keydown", this.__keyDownUpFunc = (e: KeyboardEvent) => this.__onKeyDownUp(e), false);
         window.addEventListener("keyup", this.__keyDownUpFunc, false);
-        window.addEventListener("submit", this.__submitFunc = (e: Event) => this.__onSubmit(e), false);
+        window.addEventListener("submit", this.__submitFunc = (e: SubmitEvent) => this.__onSubmit(e), false);
 
         const context: StartContext = {
             items: {}
@@ -249,8 +249,15 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         }
     }
     submit(options: SubmitOptions) {
-        const { form } = options;
+        const { form, button } = options;
         let { context, callback } = options;
+
+        if (form.classList.contains(LoadingElementClass))
+            return false;
+        form.classList.add(LoadingElementClass);
+
+        if (button)
+            button.classList.add(LoadingElementClass);
 
         if (!callback)
             callback = () => { return; };
@@ -258,34 +265,48 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         if (!context)
             context = {};
 
-        console.log(`form sibmiting`);
+        context["formSubmit"] = form;
 
-        if (form.classList.contains(loadingLinkClass))
-            return false;
-        form.classList.add(loadingLinkClass);
+        let method = form.method;
+        let enctype = form.enctype;
+        let url = form.action ? form.action : location.href;
+
+        if (button) {
+            // Если отправка с кнопки, то берём её параметры
+            if (button.formMethod)
+                method = button.formMethod;
+            if (button.formEnctype)
+                enctype = button.formEnctype;
+            if (button.formAction)
+                url = button.formAction;
+        }
+
+        const urlHashIndex = url.lastIndexOf("#");
+        if (urlHashIndex > 0)
+            url = url.substring(0, urlHashIndex);
+
+        console.info(`form sibmiting: ${method.toUpperCase()} ${url}`);
 
         const complexCallback = () => {
-            form.classList.remove(loadingLinkClass);
+            form.classList.remove(LoadingElementClass);
+
+            if (button)
+                button.classList.remove(LoadingElementClass);
 
             callback({ context });
 
             this.endLoadingIndicator();
 
-            console.log(`form sibmited`);
+            console.info(`form sibmited`);
         };
 
         this.beginLoadingIndicator();
 
-        if (form.method === "get") {
+        if (method === "get") {
             const formData = new FormData(form);
             const p = new Array<string>();
             formData.forEach((v, k) => { p.push(`${encodeURIComponent(k)}=${encodeURIComponent(v.toString())}`) });
             const queryParams = p.join('&');
-
-            let url = form.action ? form.action : location.href;
-            const urlHashIndex = url.lastIndexOf("#");
-            if (urlHashIndex > 0)
-                url = url.substring(0, urlHashIndex);
 
             if (queryParams) {
                 if (url.lastIndexOf("?") === -1)
@@ -296,15 +317,21 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
             this.nav({
                 url,
-                replace: form.hasAttribute(navReplaceAttributeName),
+                replace: form.hasAttribute(NavUrlReplaceAttributeName),
+                context: context,
                 callback: complexCallback
             });
+
             return;
         }
 
         var submitContext: SubmitContext = {
-            items: {},
             form,
+            button,
+            method,
+            enctype,
+            url,
+            items: {},
             context
         }
 
@@ -318,12 +345,12 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         let elem = e.target as HTMLElement;
         let ignore = false;
         while (elem) {
-            if (elem.hasAttribute(navIgnoreAttributeName)) {
+            if (elem.hasAttribute(NavIgnoreAttributeName)) {
                 ignore = true;
                 break;
             }
 
-            if (elem.classList && elem.classList.contains(navUrlClassName))
+            if (elem.classList && elem.classList.contains(NavUrlClassName))
                 break;
             if (elem === e.currentTarget)
                 return;
@@ -354,19 +381,19 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
         let url: string = null;
         if (elem.tagName === "A")
             url = elem.getAttribute("href");
-        else if (elem.hasAttribute(navUrlAttributeName))
-            url = elem.getAttribute(navUrlAttributeName);
+        else if (elem.hasAttribute(NavUrlAttributeName))
+            url = elem.getAttribute(NavUrlAttributeName);
         else
             throw "Не удалось получить Url адрес для перехода.";
 
-        if (elem.classList.contains(loadingLinkClass))
+        if (elem.classList.contains(LoadingElementClass))
             return false;
-        elem.classList.add(loadingLinkClass);
+        elem.classList.add(LoadingElementClass);
 
         this.nav({
             url,
-            replace: elem.hasAttribute(navReplaceAttributeName),
-            callback: () => { elem.classList.remove(loadingLinkClass); }
+            replace: elem.hasAttribute(NavUrlReplaceAttributeName),
+            callback: () => { elem.classList.remove(LoadingElementClass); }
         });
 
         return false;
@@ -374,20 +401,16 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     private __onKeyDownUp(e: KeyboardEvent) {
         this._ctrlPressed = e.ctrlKey;
     }
-    private __onSubmit(e: Event) {
+    private __onSubmit(e: SubmitEvent) {
         const form = e.target as HTMLFormElement;
-        if (!form.classList.contains(formClassName))
+        if (!form.classList.contains(FormClassName))
             return;
-        //if (!form.checkValidity() && !form.noValidate)
-        //    return;
 
         e.preventDefault();
 
         this.submit({
             form,
-            context: {
-                event: e
-            }
+            button: e.submitter instanceof HTMLButtonElement ? <HTMLButtonElement>e.submitter : null
         });
     }
 

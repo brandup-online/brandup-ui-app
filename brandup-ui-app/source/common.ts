@@ -27,6 +27,7 @@ export interface NavigationResult {
 
 export interface SubmitOptions {
     form: HTMLFormElement;
+    button: HTMLButtonElement;
     context?: { [key: string]: any };
     callback?: (result: SubmitResult) => void;
 }

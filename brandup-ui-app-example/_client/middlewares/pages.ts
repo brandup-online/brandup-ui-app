@@ -1,6 +1,7 @@
 ﻿import { LoadContext, Middleware, NavigateContext, StartContext, StopContext, SubmitContext } from "brandup-ui-app";
 import { PageModel } from "../pages/base";
 import { DOM } from "brandup-ui-dom";
+import { AJAXMethod, AjaxResponse, ajaxRequest } from "brandup-ui-ajax";
 
 export class PagesMiddleware extends Middleware {
     private _appContentElem: HTMLElement;
@@ -57,7 +58,7 @@ export class PagesMiddleware extends Middleware {
                 const contentElem = DOM.tag("div", "page");
                 content.appendChild(contentElem);
 
-                this._page = new t.default(contentElem);
+                this._page = new t.default(this.app, contentElem);
 
                 this._appContentElem.appendChild(content);
 
@@ -71,7 +72,20 @@ export class PagesMiddleware extends Middleware {
     }
 
     submit(context: SubmitContext, next: () => void, end: () => void) {
-        super.submit(context, next, end);
+        const data = new FormData(context.form);
+        const antyElem = <HTMLInputElement>document.getElementsByName("__RequestVerificationToken")[0];
+        data.append(antyElem.name, antyElem.value);
+
+        ajaxRequest({
+            url: context.url,
+            method: <AJAXMethod>context.method.toUpperCase(),
+            data: data,
+            success: (response: AjaxResponse) => {
+                alert(response.data);
+
+                super.submit(context, next, end);
+            }
+        });
     }
 
     stop(context: StopContext, next: () => void, end: () => void) {

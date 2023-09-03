@@ -1,12 +1,15 @@
 ﻿import { UIElement } from "brandup-ui";
+import { Application } from "brandup-ui-app";
 import { DOM } from "brandup-ui-dom";
 
 export abstract class PageModel extends UIElement {
+    readonly app: Application;
     abstract get header(): string;
 
-    constructor(containerElement: HTMLElement) {
+    constructor(app: Application, containerElement: HTMLElement) {
         super();
 
+        this.app = app;
         this.setElement(containerElement);
     }
 
