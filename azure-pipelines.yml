@@ -22,7 +22,6 @@ stages:
   jobs:
   - job: BuildNpm
     displayName: Build NPM
-    dependsOn: [ BuildNet ]
     pool:
       vmImage: $(vmImageName)
     steps:
