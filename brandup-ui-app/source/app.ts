@@ -22,6 +22,9 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
     private __submitFunc: (e: Event) => void;
     private _ctrlPressed = false;
 
+    private __middlewares: { [key: string]: Middleware<TModel> } = {};
+    private __middlewaresNames: { [key: string]: string } = {};
+
     constructor(env: EnvironmentModel, model: TModel, middlewares: Array<Middleware<TModel>>) {
         super();
 
@@ -38,13 +41,31 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             middlewares.forEach((m) => {
                 m.bind(this);
 
+                var name = m.constructor.name.toLowerCase();
+                if (name.endsWith("middleware"))
+                    name = name.substring(0, name.length - "middleware".length);
+
+                if (this.__middlewares.hasOwnProperty(name))
+                    throw `Middleware "${name}" already registered.`;
+
+                this.__middlewares[name] = m;
+                this.__middlewaresNames[m.constructor.name] = name;
+
                 this.__invoker.next(m);
             });
         }
     }
 
-    get invoker(): MiddlewareInvoker { return this.__invoker; }
     get typeName(): string { return "Application" }
+    get invoker(): MiddlewareInvoker { return this.__invoker; }
+
+    middleware<T extends Middleware<TModel>>(c: new () => T): T {
+        const name = this.__middlewaresNames[c.name];
+        if (!name)
+            throw `Middleware ${c.name} is not registered.`;
+
+        return <T>this.__middlewares[name];
+    }
 
     start(callback?: (app: Application) => void) {
         if (this.__isInit)

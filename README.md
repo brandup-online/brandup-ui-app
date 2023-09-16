@@ -6,7 +6,7 @@ Configure your application with middlewares and run.
 
 ```
 import { ApplicationBuilder } from "brandup-ui-app";
-import { TestMiddleware } from "./middlewares/test";
+import { PagesMiddleware } from "./middlewares/pages";
 import "./styles.less";
 
 interface WebsiteModel extends ApplicationModel {
@@ -15,7 +15,7 @@ interface WebsiteModel extends ApplicationModel {
 const appModel: WebsiteModel = {}
 
 const builder = new ApplicationBuilder();
-builder.useMiddleware(new TestMiddleware());
+builder.useMiddleware(new PagesMiddleware());
 
 const app = builder.build<WebsiteModel>({ basePath: "/" }, appModel);
 
@@ -28,7 +28,7 @@ app.load();
 Inject to application lifecycle events.
 
 ```
-export class TestMiddleware extends Middleware<WebsiteModel> {
+export class PagesMiddleware extends Middleware<WebsiteModel> {
     start(_context, next) {
         console.log("start");
 
