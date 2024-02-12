@@ -281,12 +281,10 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             button.classList.add(LoadingElementClass);
 
         if (!callback)
-            callback = () => { return; };
+            callback = () => { };
 
         if (!context)
             context = {};
-
-        context["formSubmit"] = form;
 
         let method = form.method;
         let enctype = form.enctype;
@@ -308,11 +306,13 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         console.info(`form sibmiting: ${method.toUpperCase()} ${url}`);
 
-        const complexCallback = () => {
+        const submitCallback = () => {
             form.classList.remove(LoadingElementClass);
 
             if (button)
                 button.classList.remove(LoadingElementClass);
+
+            context["form"] = form;
 
             callback({ context });
 
@@ -325,9 +325,9 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
 
         if (method === "get") {
             const formData = new FormData(form);
-            const p = new Array<string>();
-            formData.forEach((v, k) => { p.push(`${encodeURIComponent(k)}=${encodeURIComponent(v.toString())}`) });
-            const queryParams = p.join('&');
+            const queryParts = new Array<string>();
+            formData.forEach((v, k) => { queryParts.push(`${encodeURIComponent(k)}=${encodeURIComponent(v.toString())}`) });
+            const queryParams = queryParts.join('&');
 
             if (queryParams) {
                 if (url.lastIndexOf("?") === -1)
@@ -340,7 +340,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
                 url,
                 replace: form.hasAttribute(NavUrlReplaceAttributeName),
                 context: context,
-                callback: complexCallback
+                callback: submitCallback
             });
 
             return;
@@ -356,7 +356,7 @@ export class Application<TModel extends ApplicationModel = {}> extends UIElement
             context
         }
 
-        this.__invoker.invoke("submit", submitContext, complexCallback);
+        this.__invoker.invoke("submit", submitContext, submitCallback);
     }
     reload() {
         this.nav({ url: null, replace: true });
