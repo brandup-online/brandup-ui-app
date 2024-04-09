@@ -25,10 +25,10 @@
   "license": "Apache-2.0",
   "version": "1.0.0",
   "dependencies": {
-    "brandup-ui": "^2.0.7"
+    "brandup-ui": "^2.0.8"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.4"
   },
   "scripts": {
     "build": "tsc"
